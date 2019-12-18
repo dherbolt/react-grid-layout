@@ -280,7 +280,8 @@ function (_React$Component) {
       if (!l) return;
       this.setState({
         oldDragItem: (0, _utils.cloneLayoutItem)(l),
-        oldLayout: this.state.layout
+        oldLayout: this.state.layout,
+        isDragging: true
       });
       return this.props.onDragStart(layout, l, l, null, e, node);
     }
@@ -366,7 +367,8 @@ function (_React$Component) {
         activeDrag: null,
         layout: newLayout,
         oldDragItem: null,
-        oldLayout: null
+        oldLayout: null,
+        isDragging: false
       });
       this.onLayoutMaybeChanged(newLayout, oldLayout);
     }
@@ -399,7 +401,8 @@ function (_React$Component) {
       if (!l) return;
       this.setState({
         oldResizeItem: (0, _utils.cloneLayoutItem)(l),
-        oldLayout: this.state.layout
+        oldLayout: this.state.layout,
+        isResizing: true
       });
       this.props.onResizeStart(layout, l, l, null, e, node);
     }
@@ -496,7 +499,8 @@ function (_React$Component) {
         activeDrag: null,
         layout: newLayout,
         oldResizeItem: null,
-        oldLayout: null
+        oldLayout: null,
+        isResizing: false
       });
       this.onLayoutMaybeChanged(newLayout, oldLayout);
     }
@@ -520,7 +524,10 @@ function (_React$Component) {
           rowHeight = _this$props4.rowHeight,
           maxRows = _this$props4.maxRows,
           useCSSTransforms = _this$props4.useCSSTransforms,
-          transformScale = _this$props4.transformScale; // {...this.state.activeDrag} is pretty slow, actually
+          transformScale = _this$props4.transformScale;
+      var classNames = ["react-grid-placeholder"];
+      this.state.isResizing && classNames.push("react-grid-placeholder-resizing");
+      this.state.isDragging && classNames.push("react-grid-placeholder-dragging"); // {...this.state.activeDrag} is pretty slow, actually
 
       return _react.default.createElement(_GridItem.default, {
         w: activeDrag.w,
@@ -528,7 +535,7 @@ function (_React$Component) {
         x: activeDrag.x,
         y: activeDrag.y,
         i: activeDrag.i,
-        className: "react-grid-placeholder",
+        className: classNames.join(" "),
         containerWidth: width,
         cols: cols,
         margin: margin,
