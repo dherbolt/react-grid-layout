@@ -47,7 +47,9 @@ type State = {
   // Mirrored props
   children: ReactChildrenArray<ReactElement<any>>,
   compactType?: CompactType,
-  propsLayout?: Layout
+  propsLayout?: Layout,
+  isResizing?: boolean,
+  isDragging?: boolean
 };
 
 export type Props = {
@@ -407,7 +409,8 @@ export default class ReactGridLayout extends React.Component<Props, State> {
 
     this.setState({
       oldDragItem: cloneLayoutItem(l),
-      oldLayout: this.state.layout
+      oldLayout: this.state.layout,
+      isDragging: true
     });
 
     return this.props.onDragStart(layout, l, l, null, e, node);
@@ -498,7 +501,8 @@ export default class ReactGridLayout extends React.Component<Props, State> {
       activeDrag: null,
       layout: newLayout,
       oldDragItem: null,
-      oldLayout: null
+      oldLayout: null,
+      isDragging: false
     });
 
     this.onLayoutMaybeChanged(newLayout, oldLayout);
@@ -519,7 +523,8 @@ export default class ReactGridLayout extends React.Component<Props, State> {
 
     this.setState({
       oldResizeItem: cloneLayoutItem(l),
-      oldLayout: this.state.layout
+      oldLayout: this.state.layout,
+      isResizing: true
     });
 
     this.props.onResizeStart(layout, l, l, null, e, node);
@@ -594,7 +599,8 @@ export default class ReactGridLayout extends React.Component<Props, State> {
       activeDrag: null,
       layout: newLayout,
       oldResizeItem: null,
-      oldLayout: null
+      oldLayout: null,
+      isResizing: false
     });
 
     this.onLayoutMaybeChanged(newLayout, oldLayout);
@@ -617,7 +623,9 @@ export default class ReactGridLayout extends React.Component<Props, State> {
       useCSSTransforms,
       transformScale
     } = this.props;
-
+    const classNames = ["react-grid-placeholder"];
+    this.state.isResizing && classNames.push("react-grid-placeholder-resizing");
+    this.state.isDragging && classNames.push("react-grid-placeholder-dragging");
     // {...this.state.activeDrag} is pretty slow, actually
     return (
       <GridItem
@@ -626,7 +634,7 @@ export default class ReactGridLayout extends React.Component<Props, State> {
         x={activeDrag.x}
         y={activeDrag.y}
         i={activeDrag.i}
-        className="react-grid-placeholder"
+        className={classNames.join(" ")}
         containerWidth={width}
         cols={cols}
         margin={margin}
